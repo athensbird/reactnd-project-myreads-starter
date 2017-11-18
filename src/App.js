@@ -1,7 +1,9 @@
 import React from 'react';
+import { Route, Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import './App.css';
 import Bookshelf from './Bookshelf';
+import Search from './Search';
 
 class BooksApp extends React.Component {
   state = {
@@ -22,21 +24,35 @@ class BooksApp extends React.Component {
   changeShelf(book, shelf) {
     console.log("Change book ", book.title, "to shelf ", shelf);
     BooksAPI.update(book, shelf);
-    this.setState({
-      books: this.state.books.map(b => {
-        if (b.id === book.id) {
-          b.shelf = shelf;
-        }
-        return b;
+    BooksAPI.getAll().then(books => {
+      console.log(books);
+      this.setState({
+        books: books.map(b => {
+          if (b.id === books.id) {
+            b.shelf = shelf;
+          }
+          return b;
+        })
       })
     })
   }
   render() {
     return (
       <div className="app">
-        <Bookshelf shelf="currentlyReading" books={this.state.books} displayText="Currently Reading" handleShelf={this.changeShelf.bind(this)} />
-        <Bookshelf shelf="wantToRead" books={this.state.books} displayText="Want to Read" handleShelf={this.changeShelf.bind(this)} />
-        <Bookshelf shelf="read" books={this.state.books} displayText="Read" handleShelf={this.changeShelf.bind(this)} />
+        <Route exact path="/" render={() => (
+          <div>
+            <div className="open-search"><Link to="/search">Search the Library</Link></div>
+            <Bookshelf shelf="currentlyReading" books={this.state.books} displayText="Currently Reading" handleShelf={this.changeShelf.bind(this)} />
+            <Bookshelf shelf="wantToRead" books={this.state.books} displayText="Want to Read" handleShelf={this.changeShelf.bind(this)} />
+            <Bookshelf shelf="read" books={this.state.books} displayText="Read" handleShelf={this.changeShelf.bind(this)} />
+          </div>
+        )} />
+        <Route path="/search" render={() => (
+          <Search
+            books={this.state.books}
+            handleShelf={this.changeShelf.bind(this)}
+          />
+        )} />
       </div>
         // {this.state.showSearchPage ? (
         //   <div className="search-books">
