@@ -15,8 +15,9 @@ class BooksApp extends React.Component {
     })
   }
   changeShelf(book, shelf) {
-    console.log("Change book ", book.title, "to shelf", shelf);
-    BooksAPI.update(book, shelf);
+    BooksAPI.update(book, shelf).then(this.updateShelf(shelf));
+  }
+  updateShelf(shelf) {
     BooksAPI.getAll().then(books => {
       this.setState({
         books: books.map(b => {
@@ -26,7 +27,7 @@ class BooksApp extends React.Component {
           return b;
         })
       })
-    })
+    });
   }
   render() {
     return (
@@ -46,7 +47,6 @@ class BooksApp extends React.Component {
         )} />
         <Route path="/search" render={() => (
           <Search
-            books={this.state.books}
             handleShelf={this.changeShelf.bind(this)}
           />
         )} />
