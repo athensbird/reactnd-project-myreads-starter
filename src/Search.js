@@ -14,10 +14,17 @@ class Search extends React.Component {
     });
   }
   updateQuery = (query) => {
+    const {favoriteBooks} = this.props;
     this.setState({query: query})
     BooksAPI.search(query, 20)
       .then(books => {
-        this.setState({ books });
+        this.setState({
+          books: books.map(b => {
+            var target = favoriteBooks.filter(fb => fb.id === b.id);
+            if (target[0]) {b.shelf = target[0].shelf}
+            return b;
+          })
+        });
       });
   }
   updateShelf = (book, shelf) => {

@@ -47,6 +47,7 @@ class BooksApp extends React.Component {
         )} />
         <Route path="/search" render={() => (
           <Search
+            favoriteBooks={this.state.books}
             handleShelf={this.changeShelf.bind(this)}
           />
         )} />
